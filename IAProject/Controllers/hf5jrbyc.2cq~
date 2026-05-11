@@ -1,0 +1,130 @@
+﻿using Application.DTOs;
+using AutoMapper;
+using Azure.Core;
+using Core.AuthModel;
+using Core.Interfaces;
+using Core.Models;
+using Infrastructure.Repos;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.Crypto.Generators;
+using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace IAProject.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class UsersController : Controller
+    {
+        private GenericRepo<User> _userRepo;
+        private IMapper mapper;
+        private JWT _jwt;
+        public UsersController(GenericRepo<User> userRepo, IMapper mapper,IOptions<JWT> jwt)
+        {
+            _userRepo = userRepo;
+            this.mapper = mapper;
+            _jwt = jwt.Value;
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> register(UserDTORegister users)
+        {
+            try
+            {
+                string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$";
+                Regex regex = new Regex(pattern);
+
+                bool isValid = regex.IsMatch(users.Password);
+                if (!isValid)
+                {
+                    throw new ValidationException("invaild password must have upper case\n lowercase\nspicail char\n");
+                }
+                if (_userRepo.GetQueryable().Any(s => s.Email == users.Email)!)
+                {
+                    throw new ValidationException("User already exists");
+                }
+
+                var newuser = mapper.Map<User>(users);
+                var hasher = new PasswordHasher<User>();
+
+                newuser.Password = hasher.HashPassword(newuser, users.Password);
+                newuser.RoleId = 1;
+
+                var result = _userRepo.insert(newuser);
+
+                return Ok(new {message="success"});
+                
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserDTOLogin request)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var check=_userRepo.GetQueryable().Where(s => s.Email == request.Email).FirstOrDefault();
+
+            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$";
+            Regex regex = new Regex(pattern);
+
+            bool isValid = regex.IsMatch(request.Password);
+            if (!isValid)
+            {
+                throw new ValidationException("invaild password must have upper case\n lowercase\nspicail char\n");
+            }
+
+            if (check == null)
+            {
+                throw new ArgumentNullException("inccorect email or password");
+            }
+            if (new PasswordHasher<UserDTOLogin>().VerifyHashedPassword(request, check.Password, request.Password) == PasswordVerificationResult.Failed)
+            {
+                throw new ValidationException("inccorect email or password");
+            }
+            var Role = _userRepo.GetQueryable().Where(s => s.Id == check.Id).Select(s => s.Role.Name).ToList();
+
+            var claims = new List<Claim>
+            {
+                new Claim("userid", check.Id.ToString()),
+                new Claim("E-mail", check.Email)
+            };
+            foreach (var role in Role)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            
+            
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_jwt.Key)
+            );
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new JwtSecurityToken(
+                 issuer: _jwt.Issuer,
+                audience: _jwt.Audience,
+                claims: claims,
+              expires: DateTime.UtcNow.AddDays(_jwt.DurationinDays),
+                signingCredentials: creds
+            );
+
+            var token = handler.WriteToken(tokenDescriptor);
+            return Ok(token);
+        }
+    }
+      
+        
+    }
+

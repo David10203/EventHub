@@ -1,0 +1,6 @@
+@IAProject_HostAddress = http://localhost:5002
+
+GET {{IAProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,74 @@
+﻿using Core.Models;
+using Infrastructure.Repos;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using QRCoder;
+using System.Drawing;
+
+namespace IAProject.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class TicketsController : Controller
+    {
+        private GenericRepo<Ticket> _ticketRepo;
+        private GenericRepo<Event> _eventRepo;
+        private GenericRepo<User> _userRepo;
+        public TicketsController( GenericRepo<Ticket> ticketRepo,GenericRepo<Event> eventRepo,GenericRepo<User> userRepo)
+        {
+            _userRepo = userRepo;
+            _eventRepo = eventRepo;
+            _ticketRepo = ticketRepo;
+        }
+   
+
+        [HttpGet]
+        public IActionResult ResrvationTicket(int eventid,int numberOfTickets,int userid)
+        {
+            var eventresrved=_eventRepo.GetById(eventid);
+            if (eventresrved == null) {
+                return BadRequest("Event not found");
+            }
+            if (numberOfTickets > eventresrved.NumberOfTickets)
+            {
+                return BadRequest("Not enough tickets");
+            }
+            eventresrved.NumberOfTickets -= numberOfTickets;
+            _eventRepo.update(eventresrved);
+            var user=_userRepo.GetById(userid);
+
+            var ticketObject = new Ticket()
+            {
+                UserId = userid,
+                EventId = eventid,
+                UserName = user.FirstName + ' ' + user.LastName,
+                TicketPrice = eventresrved.NumberOfTickets,
+
+            };
+
+            _ticketRepo.insert(ticketObject);
+            var qrData = JsonConvert.SerializeObject(ticketObject);
+
+           
+            
+
+
+
+            // Data you want inside QR (can be URL or JSON)
+            //string qrData = _ticketRepo.GetQueryable().Where(s => s.Id == int.Parse(ticketId)).FirstOrDefault().Id.ToString();
+
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            {
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+
+                using (Bitmap qrImage = qrCode.GetGraphic(20))
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    qrImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    return File(ms.ToArray(), "image/png");
+                }
+            }
+        }
+    }
+}
