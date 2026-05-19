@@ -1,5 +1,4 @@
 ﻿using Application.DTOs;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces.Services
 {
-    public interface ITicketService
+    public interface IAuthService
     {
-        Task<object> ResrvationTicket(ReservationRequest reservation,int userid);
-        Task<List<TicketResponse>> GetTickets(int userid);
+        Task<object> Login(UserDTOLogin request);
+        Task<bool> Register(UserDTORegister request);
     }
 }

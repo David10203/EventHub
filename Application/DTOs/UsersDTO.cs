@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Enums;
+using Core.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,9 @@ namespace Application.DTOs
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Password is required")]
-        
+
         public string Password { get; set; }
-        public int RoleId {  get; set; }
+        public int RoleId { get; set; }
     }
     public class UserDTOLogin
     {
@@ -34,7 +35,7 @@ namespace Application.DTOs
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Password is required")]
-       
+
         public string Password { get; set; }
 
     }
@@ -46,8 +47,19 @@ namespace Application.DTOs
 
         public string Email { get; set; }
         public string RoleName { get; set; }
-        public bool isApproved { get; set; }
+        public ApprovalEnums isApproved { get; set; }
         public ICollection<EventResponseAdminDTO> OrganizedEvents { get; set; } = new List<EventResponseAdminDTO>();
+        //public ICollection<EventResponseAdminDTO> OrganizedEvents { get; set; } = new List<EventResponseAdminDTO>();
+
+    }
+
+ 
+
+    public class FavortitesDTO
+    {
+
+        public EventResponseDTO Event { get; set; }
+        public bool isfavorite { get; set; } 
 
     }
 }

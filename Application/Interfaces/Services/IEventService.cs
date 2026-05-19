@@ -21,7 +21,15 @@ namespace Application.Interfaces.Services
         Task<object> Analytics();
 
         Task<bool> RevokeEvent(int id);
-      
+         Task<List<CartDTO>> GetListOfEvents(List<int> EventIds);
+
+        Task<List<CartDTO>> GetCartEvents();
+        Task<bool> ClearCart();
+        Task<bool> DeleteEventFromCart(int eventid);
+
+        Task<bool> RejectEvent(int id);
+
+        Task<AttachmentDTO> GetImage(int id);
 
     }
 }

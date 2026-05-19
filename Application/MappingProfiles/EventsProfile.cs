@@ -13,12 +13,19 @@ namespace Application.MappingProfiles
     {
         public EventsProfile()
         {
-            CreateMap<Event,EventCreateDTO >().ReverseMap();
-            CreateMap<Event, EventResponseDTO>()
-                .ForMember(dest => dest.OrganizerName, opt => opt.MapFrom(src => src.User.FirstName))
-           .ReverseMap();
+            CreateMap<EventCreateDTO, Event>()
+                  .ForMember(dest => dest.Image, opt => opt.Ignore())          
+                  .ForMember(dest => dest.AttachmentData, opt => opt.Ignore());
 
-            CreateMap<Event, EventResponseAdminDTO>();
+
+            CreateMap<Event, EventResponseDTO>()
+                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? Convert.ToBase64String(src.Image) : null))
+                .ForMember(dest => dest.OrganizerName, opt => opt.MapFrom(src => src.User.FirstName));
+
+            CreateMap<Event, EventResponseAdminDTO>()
+                    .ForMember(dest => dest.Image,opt => opt.MapFrom(src =>src.Image != null ? Convert.ToBase64String(src.Image) : null));
+
+            CreateMap<Event, CartDTO>().ReverseMap();
 
         }
     }
