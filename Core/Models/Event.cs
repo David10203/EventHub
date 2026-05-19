@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,19 +13,19 @@ namespace Core.Models
     {
         [Key]
         public int id { get; set; }
-    
+
         public string description { get; set; }
         public string Location { get; set; }
         public string title { get; set; }
         public int NumberOfTickets { get; set; }
         public int AvailableTickets { get; set; }
-        public string image { get; set; }
 
-        public  int CategoryId { get; set; }
+
+        public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
-        public bool isAccepted { get; set; }
+        public ApprovalEnums isAccepted { get; set; }= ApprovalEnums.Pending;
         public DateTime date
         {
             get; set;
@@ -36,10 +37,14 @@ namespace Core.Models
         public User User { get; set; }
         public int TicketPrice { get; set; }
 
+        public byte[]? Image { get; set; }
+
+
+
 
         public byte[]? AttachmentData { get; set; }
 
-        
+
         public string? AttachmentFileName { get; set; }
         public string? AttachmentContentType { get; set; }
     }

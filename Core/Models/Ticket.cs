@@ -21,5 +21,8 @@ namespace Core.Models
         public User User{ get; set; }
         public int Quantity { get; set; }
         public int TicketPrice { get; set; }
+        public int? Rating { get; set; }
+
+        public byte[]? Qr { get; set; }
     }
 }

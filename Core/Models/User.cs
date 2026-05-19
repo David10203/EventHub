@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -28,7 +29,7 @@ namespace Core.Models
 
         public ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
- 
-        public bool isApproved { get; set; }=false;
+
+        public ApprovalEnums isApproved { get; set; }
     }
 }
