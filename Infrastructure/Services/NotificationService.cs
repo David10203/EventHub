@@ -34,26 +34,29 @@ namespace Infrastructure.Services
 
         public async Task NotifyEventApprovedAsync(Event approvedEvent)
         {
-            // ── 1. Real-time: push to ALL connected SignalR clients ────────────
-            await _hubContext.Clients.All.SendAsync("EventApproved", new
+            
+            await _hubContext.Clients.Group("participants").SendAsync("EventApproved", new
             {
                 eventId = approvedEvent.id,
                 title = approvedEvent.title,
                 description = approvedEvent.description,
                 location = approvedEvent.Location,
                 date = approvedEvent.date,
-                image = approvedEvent.image,
-                ticketPrice = approvedEvent.TicketPrice
+                image = approvedEvent.Image != null
+                     ? Convert.ToBase64String(approvedEvent.Image)
+                        : null,
+
+            ticketPrice = approvedEvent.TicketPrice
             });
 
             _logger.LogInformation(
                 "SignalR broadcast sent for approved event '{Title}' (id={Id})",
                 approvedEvent.title, approvedEvent.id);
 
-            // ── 2. Email: notify every registered user ─────────────────────────
+         
             var allEmails = _userRepo
                 .GetQueryable()
-                .Where(u => !string.IsNullOrEmpty(u.Email))
+                .Where(u => !string.IsNullOrEmpty(u.Email)&& u.RoleId==3)
                 .Select(u => new { u.FirstName, u.Email })
                 .ToList();
 
@@ -68,7 +71,7 @@ namespace Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    // Log failure but continue — one bad address won't abort the rest
+                   
                     _logger.LogError(ex,
                         "Failed to send approval email to {Email}", user.Email);
                 }

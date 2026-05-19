@@ -1,6 +1,9 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.DTOs;
+using Application.Interfaces.Services;
+using AutoMapper;
 using Core.Models;
 using Infrastructure.Repos;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using QRCoder;
 using System;
@@ -9,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Infrastructure.Services
 {
@@ -17,108 +21,119 @@ namespace Infrastructure.Services
         private GenericRepo<Ticket> _ticketRepo;
         private GenericRepo<Event> _eventRepo;
         private GenericRepo<User> _userRepo;
+        private IMapper _mapper;
         private GenericRepo<UserEvent> _UsereventRepo;
 
-        public TicketService( GenericRepo<Ticket> ticketRepo, GenericRepo<Event> eventRepo, GenericRepo<User> userRepo, GenericRepo<UserEvent> usereventRepo)
+        public TicketService(GenericRepo<Ticket> ticketRepo, GenericRepo<Event> eventRepo, GenericRepo<User> userRepo, GenericRepo<UserEvent> usereventRepo, IMapper mapper)
         {
+            _mapper = mapper;
             _ticketRepo = ticketRepo;
             _eventRepo = eventRepo;
             _userRepo = userRepo;
             _UsereventRepo = usereventRepo;
-            
+
         }
 
-        public async Task<object> ResrvationTicket(int eventid, int numberOfTickets, int userid)
+        public async Task<object> ResrvationTicket(ReservationRequest reservation, int userid)
         {
-            var eventresrved = _eventRepo.GetById(eventid);
-            if (eventresrved == null)
-                throw new Exception("Event not found");
-
             var user = _userRepo.GetById(userid);
-            if (user == null)
-                throw new Exception("User not found");
-
-            if (numberOfTickets <= 0)
-                throw new ArgumentException("Invalid ticket number");
-
-            if (numberOfTickets > eventresrved.AvailableTickets)
-                throw new ArgumentException("Not enough tickets");
-
-
-            eventresrved.AvailableTickets -= numberOfTickets;
-            await _eventRepo.update(eventresrved);
-
-
-            var userEvent = _UsereventRepo.GetQueryable()
-                .FirstOrDefault(x => x.UserId == userid && x.EventId == eventid);
-
-            if (userEvent == null)
-            {
-                await _UsereventRepo.insert(new UserEvent
-                {
-
-                    UserId = userid,
-                    EventId = eventid,
-                    IsFavorite = false
-                });
-            }
 
             List<string> qrCodes = new List<string>();
 
-            var ticket = new Ticket
+            foreach (var i in reservation.Items)
             {
+                var eventresrved = _eventRepo.GetById(i.EventId);
+                if (eventresrved == null) throw new ArgumentNullException("Event not found");
 
-                Quantity = numberOfTickets,
-                UserName = user.FirstName + " " + user.LastName,
-                UserId = userid,
-                EventId = eventid,
-                TicketPrice = eventresrved.TicketPrice
-            };
+                if (eventresrved.AvailableTickets < i.NumberOfTickets) throw new Exception("Not enough tickets available");
 
-            await _ticketRepo.insert(ticket);
+                eventresrved.AvailableTickets -= i.NumberOfTickets;
+                await _eventRepo.update(eventresrved);
 
 
-            for (int i = 0; i < numberOfTickets; i++)
-            {
-                var ticketqr = new Ticket
+
+                //var userEvent = _UsereventRepo.GetQueryable()
+                //.FirstOrDefault(x => x.UserId == userid && x.EventId == i.EventId);
+
+                //if (userEvent == null)
+                //{
+                //    await _UsereventRepo.insert(new UserEvent
+                //    {
+
+                //        UserId = userid,
+                //        EventId = i.EventId,
+                //        IsFavorite = false
+                //    });
+                //}
+
+
+
+                for (int j = 0; j < i.NumberOfTickets; j++)
                 {
-
-
-                    UserName = user.FirstName + " " + user.LastName,
-                    UserId = userid,
-                    EventId = eventid,
-                    TicketPrice = eventresrved.TicketPrice 
-                };
-
-
-
-                var qrData = JsonConvert.SerializeObject(new
-                {
-                    ticket.Id,
-                    userid,
-                    eventid
-                });
-
-                using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-                {
-                    var qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
-                    var qrCode = new QRCode(qrCodeData);
-
-                    using (Bitmap qrImage = qrCode.GetGraphic(20))
-                    using (MemoryStream ms = new MemoryStream())
+                    var ticket = new Ticket
                     {
-                        qrImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        qrCodes.Add(Convert.ToBase64String(ms.ToArray()));
+
+                        Quantity = 1,
+                        UserName = user.FirstName + " " + user.LastName,
+                        UserId = userid,
+                        EventId = i.EventId,
+                        TicketPrice = eventresrved.TicketPrice
+                    };
+
+                    await _ticketRepo.insert(ticket);
+
+
+                    var qrData = JsonConvert.SerializeObject(new
+                    {
+                        ticket.Id,
+                        userid,
+                        i.EventId
+                    });
+
+                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                    {
+                        var qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
+                        var qrCode = new QRCode(qrCodeData);
+
+                        using (Bitmap qrImage = qrCode.GetGraphic(20))
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            qrImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                            var qrBytes = ms.ToArray();
+
+
+                            ticket.Qr = qrBytes;
+
+                            await _ticketRepo.update(ticket);
+
+                            //qrCodes.Add(Convert.ToBase64String(ms.ToArray()));
+
+                        }
                     }
+
                 }
             }
 
             return new
             {
                 Message = "Tickets reserved successfully",
-                QRCodes = qrCodes
+                //QRCodes = qrCodes
             };
+
         }
+
+
+        public async Task<List<TicketResponse>> GetTickets(int userid)
+        {
+            var tickets = _ticketRepo.GetQueryable().Where(x => x.UserId == userid).Include(x => x.Events).ToList();
+            
+            var mapped = _mapper.Map<List<TicketResponse>>(tickets);
+
+            
+            return mapped;
+        }
+
     }
-    }
+}
 

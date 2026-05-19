@@ -4,6 +4,7 @@ using Infrastructure.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511114615_AddCart")]
+    partial class AddCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("Core.Models.Category", b =>
@@ -51,7 +54,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -94,9 +97,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -117,8 +117,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("isAccepted")
-                        .HasColumnType("int");
+                    b.Property<string>("image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isAccepted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("title")
                         .IsRequired()
@@ -130,7 +134,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrganizerId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Core.Models.Permission", b =>
@@ -147,7 +151,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
@@ -192,7 +196,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Core.Models.Role", b =>
@@ -209,7 +213,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -246,9 +250,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
                     b.Property<int>("TicketPrice")
                         .HasColumnType("int");
 
@@ -265,7 +266,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("Core.Models.User", b =>
@@ -297,14 +298,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("isApproved")
-                        .HasColumnType("int");
+                    b.Property<bool>("isApproved")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -315,7 +316,7 @@ namespace Infrastructure.Migrations
                             LastName = "Admin",
                             Password = "AQAAAAIAAYagAAAAEIimW0AULvCPFFKpH7E6YYTL1YIBuOysEWLjiC3AkCfZdGEzokZCJBxjmELF3sF0+Q==",
                             RoleId = 1,
-                            isApproved = 0
+                            isApproved = false
                         },
                         new
                         {
@@ -325,7 +326,7 @@ namespace Infrastructure.Migrations
                             LastName = "User",
                             Password = "AQAAAAIAAYagAAAAEIimW0AULvCPFFKpH7E6YYTL1YIBuOysEWLjiC3AkCfZdGEzokZCJBxjmELF3sF0+Q==",
                             RoleId = 3,
-                            isApproved = 0
+                            isApproved = false
                         },
                         new
                         {
@@ -335,7 +336,7 @@ namespace Infrastructure.Migrations
                             LastName = "Organizer",
                             Password = "AQAAAAIAAYagAAAAEIimW0AULvCPFFKpH7E6YYTL1YIBuOysEWLjiC3AkCfZdGEzokZCJBxjmELF3sF0+Q==",
                             RoleId = 2,
-                            isApproved = 0
+                            isApproved = false
                         });
                 });
 
@@ -350,11 +351,14 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId", "EventId");
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("UserEvents", (string)null);
+                    b.ToTable("UserEvents");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
@@ -369,7 +373,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RolesId");
 
-                    b.ToTable("PermissionRole", (string)null);
+                    b.ToTable("PermissionRole");
 
                     b.HasData(
                         new

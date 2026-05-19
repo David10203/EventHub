@@ -25,9 +25,16 @@ namespace Infrastructure.Repos
             await _context.SaveChangesAsync();
         }
 
-        public T GetById(int id)
+        public async Task ClearCart(int usertId)
         {
-           return dbset.Find(id);
+            await _context.Carts
+                .Where(t => t.UserId == usertId)
+                .ExecuteDeleteAsync();
+        }
+
+        public  T GetById(int id)
+        {
+           return    dbset.Find(id);
              
         }
 

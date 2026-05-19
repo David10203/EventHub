@@ -24,11 +24,16 @@ namespace Infrastructure.DataBase
         public DbSet<Category> Categories { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        public DbSet<Cart> Carts { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserEvent>()
     .HasKey(x => new { x.UserId, x.EventId });
+
+            modelBuilder.Entity<Cart>()
+.HasKey(x => new { x.UserId, x.EventId });
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Role>().HasData(
@@ -49,7 +54,7 @@ namespace Infrastructure.DataBase
                new Role
                {
                    Id = 3,
-                   Name = "Participant",
+                   Name = "participant",
                   
 
                }

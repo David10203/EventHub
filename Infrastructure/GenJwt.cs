@@ -27,7 +27,7 @@ namespace Infrastructure
             _RoleRepo = repo;
             
         }
-        public   string genJWT(User user)
+        public    string genJWT(User user)
         {
             var Role = user.RoleId;
             var userRole = _RoleRepo.GetById(Role);

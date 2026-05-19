@@ -31,12 +31,12 @@ namespace Infrastructure.Services
 
         public async Task<bool> AssginPermissionToRole(int RoleId, List<int> permissions)
         {
-            var user = _RoleRepo
+            var role = _RoleRepo
         .GetQueryable()
         .Include(u => u.Permissions)
         .FirstOrDefault(u => u.Id == RoleId);
 
-            if (user == null)
+            if (role == null)
                 throw new ArgumentNullException("Role not found");
 
             var allper = _PermissionRepo
@@ -44,21 +44,21 @@ namespace Infrastructure.Services
                 .Where(a => permissions.Contains(a.Id))
                 .ToList();
 
-            user.Permissions.Clear();
+            role.Permissions.Clear();
 
             foreach (var per in allper)
             {
-                user.Permissions.Add(per);
+                role.Permissions.Add(per);
             }
 
-            _RoleRepo.update(user);
+           await _RoleRepo.update(role);
 
             return true;
         }
 
         public async Task<List<PermissionDTO>> getAllPermissions()
         {
-            var Permissions1 = _PermissionRepo.GetQueryable().Include(a=>a.Roles).ToList();
+            var Permissions1 = _PermissionRepo.GetQueryable().ToList();
             var mapped= _Mapper.Map<List<PermissionDTO>>(Permissions1);
             return mapped;
         }

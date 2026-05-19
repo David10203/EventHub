@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace IAProject.Hubs
 {
@@ -11,7 +12,17 @@ namespace IAProject.Hubs
     /// </summary>
     public class EventNotificationHub : Hub
     {
-        // No server-side methods needed — the server only pushes to clients.
-        // Add methods here later if clients need to send messages to the server.
+        public override async Task OnConnectedAsync()
+        {
+            var role = Context.User?.Claims
+                .FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+            if (role == "participant")
+                await Groups.AddToGroupAsync(Context.ConnectionId, "participants");
+
+            await base.OnConnectedAsync();
+        }
+
+
     }
 }
