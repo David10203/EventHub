@@ -15,7 +15,7 @@ namespace IAProject.Controllers
         {
             _categoryService = categoryService;
         }
-        [Authorize(Roles = "EventOrganizer,Admin")]
+        
         [HttpGet]
         public async Task<List<CategoryDTOResponse>> GetCategories()
         {

@@ -5,6 +5,68 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTORegister"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTORegister"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTORegister"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTOLogin"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTOLogin"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTOLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Category": {
       "get": {
         "tags": [
@@ -87,22 +149,7 @@
             }
           },
           {
-            "name": "Image",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "CategoryId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "OrganizerId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -124,6 +171,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "Image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
                   "Attachment": {
                     "type": "string",
                     "format": "binary"
@@ -131,6 +182,9 @@
                 }
               },
               "encoding": {
+                "Image": {
+                  "style": "form"
+                },
                 "Attachment": {
                   "style": "form"
                 }
@@ -181,6 +235,46 @@
         }
       }
     },
+    "/api/Events/RejectEvent/{id}": {
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Events/{id}": {
       "delete": {
         "tags": [
@@ -220,24 +314,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventResponseDTO"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventResponseDTO"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventResponseDTO"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
@@ -293,22 +370,7 @@
             }
           },
           {
-            "name": "Image",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "CategoryId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "OrganizerId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -330,6 +392,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "Image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
                   "Attachment": {
                     "type": "string",
                     "format": "binary"
@@ -337,6 +403,9 @@
                 }
               },
               "encoding": {
+                "Image": {
+                  "style": "form"
+                },
                 "Attachment": {
                   "style": "form"
                 }
@@ -451,6 +520,164 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Events/GetListOfEvents": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "EventIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Events/GetCartEvents": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Events/ClearCart": {
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Events/DeleteEventFromCart/{eventid}": {
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "eventid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }
@@ -694,58 +921,26 @@
         }
       }
     },
-    "/api/Tickets/ResrvationTicket/{eventid}/{numberOfTickets}": {
+    "/api/Tickets/ResrvationTicket": {
       "post": {
         "tags": [
           "Tickets"
         ],
-        "parameters": [
-          {
-            "name": "eventid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "numberOfTickets",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/register": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserDTORegister"
+                "$ref": "#/components/schemas/ReservationRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserDTORegister"
+                "$ref": "#/components/schemas/ReservationRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserDTORegister"
+                "$ref": "#/components/schemas/ReservationRequest"
               }
             }
           }
@@ -757,33 +952,40 @@
         }
       }
     },
-    "/api/Users/login": {
-      "post": {
+    "/api/Tickets/GetTickets": {
+      "get": {
         "tags": [
-          "Users"
+          "Tickets"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDTOLogin"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDTOLogin"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDTOLogin"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketResponse"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -811,7 +1013,7 @@
         }
       }
     },
-    "/api/Users/AddEventToFavorites/{userId}/{eventId}": {
+    "/api/Users/AddEventToFavorites/{eventId}": {
       "post": {
         "tags": [
           "Users"
@@ -825,14 +1027,6 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -842,20 +1036,10 @@
         }
       }
     },
-    "/api/Users/GetFavorites/{userId}": {
+    "/api/Users/GetFavorites": {
       "get": {
         "tags": [
           "Users"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -865,7 +1049,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserEvent"
+                    "$ref": "#/components/schemas/FavortitesDTO"
                   }
                 }
               },
@@ -873,7 +1057,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserEvent"
+                    "$ref": "#/components/schemas/FavortitesDTO"
                   }
                 }
               },
@@ -881,7 +1065,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserEvent"
+                    "$ref": "#/components/schemas/FavortitesDTO"
                   }
                 }
               }
@@ -890,7 +1074,7 @@
         }
       }
     },
-    "/api/Users/AddRate/{userId}/{eventId}/{rate}": {
+    "/api/Users/AddRate/{eventId}/{rate}": {
       "post": {
         "tags": [
           "Users"
@@ -912,14 +1096,6 @@
             "schema": {
               "type": "integer",
               "format": "int32"
-            }
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -981,6 +1157,29 @@
       }
     },
     "/api/Users/RevokeUser/{id}": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Users/RejectUser/{id}": {
       "put": {
         "tags": [
           "Users"
@@ -1138,10 +1337,132 @@
           }
         }
       }
+    },
+    "/api/Users/Booking/{eventId}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Users/DeleteFromFav/{eventid}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "eventid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ApprovalEnums": {
+        "enum": [
+          0,
+          1,
+          -1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "CartDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "ticketPrice": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableTickets": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "organizerId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Category": {
         "type": "object",
         "properties": {
@@ -1197,10 +1518,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "image": {
-            "type": "string",
-            "nullable": true
-          },
           "categoryId": {
             "type": "integer",
             "format": "int32"
@@ -1209,7 +1526,7 @@
             "$ref": "#/components/schemas/Category"
           },
           "isAccepted": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/ApprovalEnums"
           },
           "date": {
             "type": "string",
@@ -1225,6 +1542,11 @@
           "ticketPrice": {
             "type": "integer",
             "format": "int32"
+          },
+          "image": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
           },
           "attachmentData": {
             "type": "string",
@@ -1253,9 +1575,6 @@
             "type": "string",
             "nullable": true
           },
-          "isAccepted": {
-            "type": "boolean"
-          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -1269,10 +1588,6 @@
           "id": {
             "type": "integer",
             "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
           },
           "description": {
             "type": "string",
@@ -1289,10 +1604,6 @@
           "numberOfTickets": {
             "type": "integer",
             "format": "int32"
-          },
-          "image": {
-            "type": "string",
-            "nullable": true
           },
           "title": {
             "type": "string",
@@ -1319,11 +1630,15 @@
             "format": "int32"
           },
           "organizerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "image": {
             "type": "string",
             "nullable": true
           },
           "isAccepted": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/ApprovalEnums"
           },
           "attachmentData": {
             "type": "string",
@@ -1337,6 +1652,18 @@
           "attachmentContentType": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FavortitesDTO": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/EventResponseDTO"
+          },
+          "isfavorite": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1371,6 +1698,33 @@
           },
           "name": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReservationItem": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReservationRequest": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReservationItem"
+            },
             "nullable": true
           }
         },
@@ -1450,6 +1804,51 @@
           "ticketPrice": {
             "type": "integer",
             "format": "int32"
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "qr": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TicketResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qrBytes": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1517,7 +1916,7 @@
             "nullable": true
           },
           "isApproved": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/ApprovalEnums"
           }
         },
         "additionalProperties": false
@@ -1576,34 +1975,6 @@
         },
         "additionalProperties": false
       },
-      "UserEvent": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
-          "eventId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "event": {
-            "$ref": "#/components/schemas/Event"
-          },
-          "isFavorite": {
-            "type": "boolean"
-          },
-          "rating": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "UserResponseDTO": {
         "type": "object",
         "properties": {
@@ -1624,7 +1995,7 @@
             "nullable": true
           },
           "isApproved": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/ApprovalEnums"
           },
           "organizedEvents": {
             "type": "array",

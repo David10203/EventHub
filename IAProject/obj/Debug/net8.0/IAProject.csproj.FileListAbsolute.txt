@@ -25,7 +25,6 @@ C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\staticwebassets.
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\IAProject.csproj.Up2Date
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\IAProject.dll
 C:\Users\User\source\repos\IAProject\IAProject\obj\Debug\net8.0\refint\IAProject.dll

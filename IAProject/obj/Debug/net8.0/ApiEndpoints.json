@@ -1,5 +1,37 @@
 [
   {
+    "ContainingType": "IAProject.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Application.DTOs.UserDTOLogin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IAProject.Controllers.AuthController",
+    "Method": "register",
+    "RelativePath": "api/Auth/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "users",
+        "Type": "Application.DTOs.UserDTORegister",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "IAProject.Controllers.CategoryController",
     "Method": "GetCategories",
     "RelativePath": "api/Category",
@@ -54,16 +86,11 @@
       },
       {
         "Name": "Image",
-        "Type": "System.String",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       },
       {
         "Name": "CategoryId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "OrganizerId",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -130,17 +157,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "Application.DTOs.EventResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "IAProject.Controllers.EventsController",
@@ -182,16 +199,11 @@
       },
       {
         "Name": "Image",
-        "Type": "System.String",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       },
       {
         "Name": "CategoryId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "OrganizerId",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -242,6 +254,26 @@
   },
   {
     "ContainingType": "IAProject.Controllers.EventsController",
+    "Method": "ClearCart",
+    "RelativePath": "api/Events/ClearCart",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "IAProject.Controllers.EventsController",
     "Method": "DeleteEvent",
     "RelativePath": "api/Events/DeleteEvent/{id}",
     "HttpMethod": "DELETE",
@@ -258,6 +290,52 @@
   },
   {
     "ContainingType": "IAProject.Controllers.EventsController",
+    "Method": "DeleteEventFromCart",
+    "RelativePath": "api/Events/DeleteEventFromCart/{eventid}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventid",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "IAProject.Controllers.EventsController",
+    "Method": "GetCartEvents",
+    "RelativePath": "api/Events/GetCartEvents",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Application.DTOs.CartDTO, Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "IAProject.Controllers.EventsController",
     "Method": "GetDashboardAnalytics",
     "RelativePath": "api/Events/GetDashboardAnalytics",
     "HttpMethod": "GET",
@@ -265,6 +343,58 @@
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IAProject.Controllers.EventsController",
+    "Method": "GetListOfEvents",
+    "RelativePath": "api/Events/GetListOfEvents",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "EventIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Application.DTOs.CartDTO, Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "IAProject.Controllers.EventsController",
+    "Method": "RejectEvent",
+    "RelativePath": "api/Events/RejectEvent/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "IAProject.Controllers.EventsController",
@@ -423,20 +553,35 @@
   },
   {
     "ContainingType": "IAProject.Controllers.TicketsController",
+    "Method": "GetTickets",
+    "RelativePath": "api/Tickets/GetTickets",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Application.DTOs.TicketResponse, Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "IAProject.Controllers.TicketsController",
     "Method": "ResrvationTicket",
-    "RelativePath": "api/Tickets/ResrvationTicket/{eventid}/{numberOfTickets}",
+    "RelativePath": "api/Tickets/ResrvationTicket",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "eventid",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "numberOfTickets",
-        "Type": "System.Int32",
+        "Name": "reservation",
+        "Type": "Application.DTOs.ReservationRequest",
         "IsRequired": true
       }
     ],
@@ -445,7 +590,7 @@
   {
     "ContainingType": "IAProject.Controllers.UsersController",
     "Method": "AddEventToFavorites",
-    "RelativePath": "api/Users/AddEventToFavorites/{userId}/{eventId}",
+    "RelativePath": "api/Users/AddEventToFavorites/{eventId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -454,11 +599,6 @@
         "Name": "eventId",
         "Type": "System.Int32",
         "IsRequired": true
-      },
-      {
-        "Name": "userId",
-        "Type": "",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -466,7 +606,7 @@
   {
     "ContainingType": "IAProject.Controllers.UsersController",
     "Method": "AddRate",
-    "RelativePath": "api/Users/AddRate/{userId}/{eventId}/{rate}",
+    "RelativePath": "api/Users/AddRate/{eventId}/{rate}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -479,11 +619,6 @@
       {
         "Name": "rate",
         "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "userId",
-        "Type": "",
         "IsRequired": true
       }
     ],
@@ -504,6 +639,48 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IAProject.Controllers.UsersController",
+    "Method": "Booking",
+    "RelativePath": "api/Users/Booking/{eventId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IAProject.Controllers.UsersController",
+    "Method": "DeleteFromFav",
+    "RelativePath": "api/Users/DeleteFromFav/{eventid}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventid",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "IAProject.Controllers.UsersController",
@@ -554,20 +731,14 @@
   {
     "ContainingType": "IAProject.Controllers.UsersController",
     "Method": "GetFavorites",
-    "RelativePath": "api/Users/GetFavorites/{userId}",
+    "RelativePath": "api/Users/GetFavorites",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[Core.Models.UserEvent, Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[Application.DTOs.FavortitesDTO, Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -605,22 +776,6 @@
   },
   {
     "ContainingType": "IAProject.Controllers.UsersController",
-    "Method": "Login",
-    "RelativePath": "api/Users/login",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "Application.DTOs.UserDTOLogin",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "IAProject.Controllers.UsersController",
     "Method": "Refresh",
     "RelativePath": "api/Users/refresh",
     "HttpMethod": "POST",
@@ -637,15 +792,15 @@
   },
   {
     "ContainingType": "IAProject.Controllers.UsersController",
-    "Method": "register",
-    "RelativePath": "api/Users/register",
-    "HttpMethod": "POST",
+    "Method": "RejectUser",
+    "RelativePath": "api/Users/RejectUser/{id}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "users",
-        "Type": "Application.DTOs.UserDTORegister",
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

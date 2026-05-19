@@ -28,14 +28,22 @@ _httpContextAccessor = httpContextAccessor;
         }
 
         [Authorize(Roles = "participant")]
-        [HttpPost("ResrvationTicket/{eventid}/{numberOfTickets}")]
-        public async Task<IActionResult> ResrvationTicket(int eventid, int numberOfTickets )
+        [HttpPost("ResrvationTicket/")]
+        public async Task<IActionResult> ResrvationTicket([FromBody] ReservationRequest reservation )
         {
             var userIdClaim = _httpContextAccessor.HttpContext?.User?
                .Claims.FirstOrDefault(x => x.Type == "userid")?.Value;
 
-            var result=  await _ticketService.ResrvationTicket(eventid, numberOfTickets , int.Parse(userIdClaim));
+            var result=  await _ticketService.ResrvationTicket(reservation, int.Parse(userIdClaim));
             return Ok(result);
+        }
+        [HttpGet("GetTickets")]
+        [Authorize(Roles = "participant")]
+        public async Task<List<TicketResponse>> GetTickets()
+        {
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?
+              .Claims.FirstOrDefault(x => x.Type == "userid")?.Value;
+            return await _ticketService.GetTickets(int.Parse(userIdClaim));
         }
     }
 }

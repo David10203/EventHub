@@ -16,7 +16,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddScoped<GenJwt>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
@@ -25,11 +25,12 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("IAProjectConnectionString")));
 builder.Services.AddScoped(typeof(GenericRepo<>));
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile(new TicketsProfile());
@@ -66,7 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme
 
     };
 
-// Allow SignalR to read the JWT from the query strin
+
 
 
     o.Events = new JwtBearerEvents
@@ -165,7 +166,7 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins("http://localhost:3000")
+        policy => policy.WithOrigins("http://localhost:3000", "http://192.168.1.2:3000", "http://10.222.109.190:3000", "http://10.225.22.190:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()); 
@@ -173,7 +174,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowReactApp");
+
 
 
 // Configure the HTTP request pipeline.
@@ -184,6 +185,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 

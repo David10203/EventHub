@@ -22,7 +22,7 @@ namespace IAProject.Controllers
             _eventService = eventService;
 
         }
-        [Authorize(Roles = "EventOrganizer,Admin")]
+        [Authorize(Roles = "EventOrganizer")]
         [Authorize(policy: "Add")]
         [HttpPost]
         public async Task<IActionResult> AddEvent( EventCreateDTO test)
@@ -32,6 +32,14 @@ namespace IAProject.Controllers
 
             return Ok(new { message = "Event added" });
         }
+
+        [HttpPut("RejectEvent/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<bool> RejectEvent(int id)
+        {
+            return await _eventService.RejectEvent(id);
+        }
+
         
         [HttpGet]
         
@@ -49,11 +57,11 @@ namespace IAProject.Controllers
             return Ok(new { message = "Event deleted" });
         }
         [HttpGet("{id}")]
-        public async Task<EventResponseDTO> GetEvent(int id)
+        public async Task<object> GetEvent(int id)
         {
             return await _eventService.GetEventById(id);
         }
-        [Authorize(Roles = "Admin,EventOrganizer")]
+        [Authorize(Roles = "EventOrganizer")]
     
         [HttpPut("{id}")]
         public  async Task<IActionResult> updateEvent(int id, EventCreateDTO test)
@@ -88,7 +96,7 @@ namespace IAProject.Controllers
         }
 
     
-        [Authorize(Roles = "Admin,EventOrganizer")]
+     
        
         [HttpGet("{id}/attachment")]
         public async Task<IActionResult> GetAttachment(int id)
@@ -98,10 +106,40 @@ namespace IAProject.Controllers
             return File(file.Data, file.ContentType, file.FileName);
         }
 
+
+
+
         [HttpGet("GetDashboardAnalytics")]
+        [Authorize(Roles = "EventOrganizer")]
         public async Task<object> GetDashboardAnalytics()
         {
             return await _eventService.Analytics();
         }
+        [HttpGet("GetListOfEvents")]
+        public async Task<List<CartDTO>> GetListOfEvents([FromQuery]List<int> EventIds)
+        {
+            return await _eventService.GetListOfEvents(EventIds);
+        }
+
+        [HttpGet("GetCartEvents")]
+        public async Task<List<CartDTO>> GetCartEvents()
+        {
+            return await _eventService.GetCartEvents();
+        }
+
+        [HttpDelete("ClearCart")]
+        public async Task<bool> ClearCart()
+        {
+            return await _eventService.ClearCart();
+        }
+        [HttpDelete("DeleteEventFromCart/{eventid}")]
+
+        public async Task<bool> DeleteEventFromCart(int eventid)
+        {
+            return await _eventService.DeleteEventFromCart(eventid);
+        }
+
+
+        
     }
 }
